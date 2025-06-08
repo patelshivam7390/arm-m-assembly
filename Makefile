@@ -3,12 +3,11 @@
 CPU = cortex-m3
 BOARD = stm32vldiscovery
 
-all:
-
 qemu:
 	arm-none-eabi-as -mcpu=$(CPU) -mthumb -ggdb -c foo.s -o foo.o
 	arm-none-eabi-ld -Tmap.ld foo.o -o foo.elf
 	arm-none-eabi-objcopy -O binary foo.elf foo.bin
+	arm-none-eabi-objdump -D -S foo.elf > foo.dis
 	qemu-system-arm -S -M $(BOARD) -cpu $(CPU) -nographic -kernel foo.elf -gdb tcp::1234
 
 gdb:
@@ -18,4 +17,4 @@ dump:
 	xxd foo.bin | less
 
 clean:
-	rm -rf *.elf *.o *.bin
+	rm -rf *.elf *.o *.bin *.dis .gdb_history
